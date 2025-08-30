@@ -11,11 +11,16 @@
 - Gitリポジトリ初期化
 - 初期コミット作成済み
 - Botは正常に動作中（バックグラウンドで実行中）
+- GitHubリポジトリ作成完了
+- コードをGitHubにプッシュ済み
+  - URL: https://github.com/koubun-osho/discord-bot-sample
 
-⏳ **次回の作業**：
-- GitHubリポジトリの作成とプッシュ
-  - リモートURL設定済み: `https://github.com/koubun/discord-bot-sample.git`
-  - GitHubでリポジトリを作成後、`git push -u origin main` でプッシュ
+📝 **次回の作業候補**：
+- Botの機能拡張（コマンド追加、リアクション機能など）
+- エラーハンドリングの改善
+- ログ機能の追加
+- Docker化
+- GitHub Actionsでの自動テスト設定
 
 ## セットアップ方法
 
@@ -40,6 +45,12 @@ python3 bot.py
 
 ## 次回再開時のコマンド
 
-GitHubにプッシュする場合：
-1. https://github.com/new でリポジトリ作成
-2. `git push -u origin main` でプッシュ
+最新のコードを取得：
+```bash
+git pull origin main
+```
+
+Botを起動：
+```bash
+python3 bot.py
+```
