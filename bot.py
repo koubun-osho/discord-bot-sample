@@ -33,7 +33,7 @@ async def help_command(interaction: discord.Interaction):
     
     embed.add_field(
         name="📝 基本機能",
-        value="このボットは、送信されたすべてのメッセージに「こんにちは。はろー！よろしくね！」と返信します。",
+        value="このボットは、送信されたメッセージをそのまま返信します（エコーボット）。",
         inline=False
     )
     
@@ -59,8 +59,8 @@ async def on_message(message):
     if message.author == bot.user:
         return
     
-    # すべてのメッセージに返信する
-    await message.channel.send('こんにちは。はろー！よろしくね！')
+    # 受け取ったメッセージをそのまま返信する
+    await message.channel.send(message.content)
     
     # コマンドも処理できるようにする
     await bot.process_commands(message)
