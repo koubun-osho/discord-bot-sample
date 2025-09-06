@@ -12,8 +12,8 @@ intents.message_content = True  # メッセージ内容を取得するために�
 intents.messages = True  # メッセージを読むために必要
 bot = commands.Bot(command_prefix='!', intents=intents)
 
-# 特定のチャンネルIDを設定
-TARGET_CHANNEL_ID = 1414011680232570932
+# 特定のサーバー（ギルド）IDを設定
+TARGET_GUILD_ID = 1386313046590492724
 
 @bot.event
 async def on_ready():
@@ -62,8 +62,8 @@ async def on_message(message):
     if message.author == bot.user:
         return
     
-    # 特定のチャンネルでのみ返信する
-    if message.channel.id == TARGET_CHANNEL_ID:
+    # 特定のサーバーでのみ返信する
+    if message.guild and message.guild.id == TARGET_GUILD_ID:
         await message.channel.send('こんにちは。はろー！よろしくね！')
     
     # コマンドも処理できるようにする
