@@ -36,7 +36,7 @@ async def help_command(interaction: discord.Interaction):
     
     embed.add_field(
         name="📝 基本機能",
-        value="このボットは、メンションまたはリプライされたときに「こんにちは。はろー！よろしくね！」と返信します。",
+        value="このボットは、メンションまたはリプライされたときに、受け取ったメッセージをそのまま返します。",
         inline=False
     )
     
@@ -72,7 +72,18 @@ async def on_message(message):
                           message.reference.resolved.author == bot.user)
         
         if is_mentioned or is_reply_to_bot:
-            await message.channel.send('こんにちは。はろー！よろしくね！')
+            # メンションを除去してメッセージ内容を取得
+            content = message.content
+            if bot.user:
+                content = content.replace(f'<@{bot.user.id}>', '').strip()
+            
+            # メッセージが空の場合
+            if not content:
+                await message.channel.send('何も入力されませんでした。')
+            else:
+                # 受け取ったメッセージをそのまま返す
+                response = f'「{content}」と入力されました。'
+                await message.channel.send(response)
     
     # コマンドも処理できるようにする
     await bot.process_commands(message)
