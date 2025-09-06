@@ -66,7 +66,7 @@ async def on_message(message):
     # コマンドも処理できるようにする
     await bot.process_commands(message)
 
-# リアクションが追加されたときのイベント
+# リアクションが追加されたときのイベント（キャッシュされているメッセージのみ）
 @bot.event
 async def on_reaction_add(reaction, user):
     # Bot自身のリアクションは無視
@@ -83,6 +83,41 @@ async def on_reaction_add(reaction, user):
         # リアクションが付けられたことを通知
         response = f'👍グッドマークが押されたよ！\n「{message_content}」のメッセージにグッドマークが押されたよ！'
         await reaction.message.channel.send(response)
+
+# 古いメッセージへのリアクションも検知するイベント
+@bot.event
+async def on_raw_reaction_add(payload):
+    # Bot自身のリアクションは無視
+    if bot.user and payload.user_id == bot.user.id:
+        return
+    
+    # 👍（サムズアップ）リアクションが追加された場合
+    if str(payload.emoji) == '👍':
+        # チャンネルを取得
+        channel = bot.get_channel(payload.channel_id)
+        if channel is None:
+            return
+        
+        # テキストチャンネルかどうか確認
+        if not isinstance(channel, discord.TextChannel):
+            return
+        
+        try:
+            # メッセージを取得
+            message = await channel.fetch_message(payload.message_id)
+            
+            # メッセージ内容を取得（長すぎる場合は省略）
+            message_content = message.content
+            if len(message_content) > 50:
+                message_content = message_content[:50] + '...'
+            
+            # リアクションが付けられたことを通知
+            response = f'👍グッドマークが押されたよ！\n「{message_content}」のメッセージにグッドマークが押されたよ！'
+            await channel.send(response)
+        except discord.NotFound:
+            pass
+        except discord.HTTPException:
+            pass
 
 # Botを起動
 TOKEN = os.getenv('DISCORD_TOKEN')
