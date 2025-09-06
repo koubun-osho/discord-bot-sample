@@ -12,9 +12,6 @@ intents.message_content = True  # メッセージ内容を取得するために�
 intents.messages = True  # メッセージを読むために必要
 bot = commands.Bot(command_prefix='!', intents=intents)
 
-# 特定のサーバー（ギルド）IDを設定
-TARGET_GUILD_ID = 1386313046590492724
-
 @bot.event
 async def on_ready():
     print(f'{bot.user} としてログインしました！')
@@ -62,10 +59,8 @@ async def on_message(message):
     if message.author == bot.user:
         return
     
-    # 特定のサーバーでのみ反応する
-    if message.guild and message.guild.id == TARGET_GUILD_ID:
-        # すべてのメッセージに返信する
-        await message.channel.send('こんにちは。はろー！よろしくね！')
+    # すべてのメッセージに返信する
+    await message.channel.send('こんにちは。はろー！よろしくね！')
     
     # コマンドも処理できるようにする
     await bot.process_commands(message)
