@@ -22,8 +22,8 @@ async def on_message(message):
     if message.author == bot.user:
         return
     
-    # どんなメッセージにも「こんにちは」と返す
-    await message.channel.send('こんにちは')
+    # どんなメッセージにも「こんにちは。はろー！よろしくね！」と返す
+    await message.channel.send('こんにちは。はろー！よろしくね！')
     
     # コマンドも処理できるようにする
     await bot.process_commands(message)
