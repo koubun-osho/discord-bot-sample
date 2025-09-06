@@ -36,7 +36,7 @@ async def help_command(interaction: discord.Interaction):
     
     embed.add_field(
         name="📝 基本機能",
-        value="このボットは、メンションまたはリプライされたときに、受け取ったメッセージをそのまま返します。",
+        value="このボットは、送信されたすべてのメッセージに「こんにちは。はろー！よろしくね！」と返信します。",
         inline=False
     )
     
@@ -48,7 +48,7 @@ async def help_command(interaction: discord.Interaction):
     
     embed.add_field(
         name="💡 使い方",
-        value="1. @メンションまたはリプライでボットに話しかけると返信します\n2. `/help`コマンドでいつでもこのヘルプを確認できます",
+        value="1. チャンネルでメッセージを送信すると、ボットが自動的に返信します\n2. `/help`コマンドでいつでもこのヘルプを確認できます",
         inline=False
     )
     
@@ -64,26 +64,8 @@ async def on_message(message):
     
     # 特定のサーバーでのみ反応する
     if message.guild and message.guild.id == TARGET_GUILD_ID:
-        # Botがメンションされているか、リプライされている場合のみ返信
-        is_mentioned = bot.user in message.mentions
-        is_reply_to_bot = (message.reference and 
-                          message.reference.resolved and 
-                          hasattr(message.reference.resolved, 'author') and
-                          message.reference.resolved.author == bot.user)
-        
-        if is_mentioned or is_reply_to_bot:
-            # メンションを除去してメッセージ内容を取得
-            content = message.content
-            if bot.user:
-                content = content.replace(f'<@{bot.user.id}>', '').strip()
-            
-            # メッセージが空の場合
-            if not content:
-                await message.channel.send('何も入力されませんでした。')
-            else:
-                # 受け取ったメッセージをそのまま返す
-                response = f'「{content}」と入力されました。'
-                await message.channel.send(response)
+        # すべてのメッセージに返信する
+        await message.channel.send('こんにちは。はろー！よろしくね！')
     
     # コマンドも処理できるようにする
     await bot.process_commands(message)
