@@ -36,7 +36,7 @@ async def help_command(interaction: discord.Interaction):
     
     embed.add_field(
         name="📝 基本機能",
-        value="このボットは、送信されたすべてのメッセージに「こんにちは。はろー！よろしくね！」と返信します。",
+        value="このボットは、メンションまたはリプライされたときに「こんにちは。はろー！よろしくね！」と返信します。",
         inline=False
     )
     
@@ -48,7 +48,7 @@ async def help_command(interaction: discord.Interaction):
     
     embed.add_field(
         name="💡 使い方",
-        value="1. チャンネルでメッセージを送信すると、ボットが自動的に返信します\n2. `/help`コマンドでいつでもこのヘルプを確認できます",
+        value="1. @メンションまたはリプライでボットに話しかけると返信します\n2. `/help`コマンドでいつでもこのヘルプを確認できます",
         inline=False
     )
     
@@ -62,9 +62,17 @@ async def on_message(message):
     if message.author == bot.user:
         return
     
-    # 特定のサーバーでのみ返信する
+    # 特定のサーバーでのみ反応する
     if message.guild and message.guild.id == TARGET_GUILD_ID:
-        await message.channel.send('こんにちは。はろー！よろしくね！')
+        # Botがメンションされているか、リプライされている場合のみ返信
+        is_mentioned = bot.user in message.mentions
+        is_reply_to_bot = (message.reference and 
+                          message.reference.resolved and 
+                          hasattr(message.reference.resolved, 'author') and
+                          message.reference.resolved.author == bot.user)
+        
+        if is_mentioned or is_reply_to_bot:
+            await message.channel.send('こんにちは。はろー！よろしくね！')
     
     # コマンドも処理できるようにする
     await bot.process_commands(message)
