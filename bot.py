@@ -1,5 +1,6 @@
 import discord
 from discord.ext import commands
+from discord import app_commands
 import os
 from dotenv import load_dotenv
 
@@ -15,6 +16,43 @@ bot = commands.Bot(command_prefix='!', intents=intents)
 @bot.event
 async def on_ready():
     print(f'{bot.user} としてログインしました！')
+    try:
+        # スラッシュコマンドを同期
+        synced = await bot.tree.sync()
+        print(f"{len(synced)}個のコマンドを同期しました")
+    except Exception as e:
+        print(f"コマンドの同期に失敗しました: {e}")
+
+# /helpスラッシュコマンド
+@bot.tree.command(name="help", description="このボットの使い方を表示します")
+async def help_command(interaction: discord.Interaction):
+    embed = discord.Embed(
+        title="🤖 Discord Bot ヘルプ",
+        description="このボットの使い方を説明します",
+        color=discord.Color.blue()
+    )
+    
+    embed.add_field(
+        name="📝 基本機能",
+        value="このボットは、送信されたすべてのメッセージに「こんにちは。はろー！よろしくね！」と返信します。",
+        inline=False
+    )
+    
+    embed.add_field(
+        name="🎯 スラッシュコマンド",
+        value="`/help` - このヘルプメッセージを表示します",
+        inline=False
+    )
+    
+    embed.add_field(
+        name="💡 使い方",
+        value="1. チャンネルでメッセージを送信すると、ボットが自動的に返信します\n2. `/help`コマンドでいつでもこのヘルプを確認できます",
+        inline=False
+    )
+    
+    embed.set_footer(text="楽しくチャットしましょう！")
+    
+    await interaction.response.send_message(embed=embed)
 
 @bot.event
 async def on_message(message):
