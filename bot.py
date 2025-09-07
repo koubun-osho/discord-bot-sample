@@ -13,6 +13,13 @@ intents.messages = True  # メッセージを読むために必要
 intents.reactions = True  # リアクションを受け取るために必要
 bot = commands.Bot(command_prefix='!', intents=intents)
 
+# 応答するチャンネルIDのリスト
+ALLOWED_CHANNELS = [
+    1414011680232570932,
+    1414011712721649726,
+    1414011743662772295
+]
+
 @bot.event
 async def on_ready():
     print(f'{bot.user} としてログインしました！')
@@ -60,8 +67,10 @@ async def on_message(message):
     if message.author == bot.user:
         return
     
-    # 受け取ったメッセージをそのまま返信する
-    await message.channel.send(message.content)
+    # 許可されたチャンネルでのみ返信する
+    if message.channel.id in ALLOWED_CHANNELS:
+        # 受け取ったメッセージをそのまま返信する
+        await message.channel.send(message.content)
     
     # コマンドも処理できるようにする
     await bot.process_commands(message)
@@ -71,6 +80,10 @@ async def on_message(message):
 async def on_reaction_add(reaction, user):
     # Bot自身のリアクションは無視
     if user == bot.user:
+        return
+    
+    # 許可されたチャンネルでのみ反応
+    if reaction.message.channel.id not in ALLOWED_CHANNELS:
         return
     
     # 👍（サムズアップ）リアクションが追加された場合
@@ -89,6 +102,10 @@ async def on_reaction_add(reaction, user):
 async def on_raw_reaction_add(payload):
     # Bot自身のリアクションは無視
     if bot.user and payload.user_id == bot.user.id:
+        return
+    
+    # 許可されたチャンネルでのみ反応
+    if payload.channel_id not in ALLOWED_CHANNELS:
         return
     
     # 👍（サムズアップ）リアクションが追加された場合
