@@ -1,5 +1,5 @@
 import discord
-from discord.ext import commands
+from discord.ext import commands, tasks
 import os
 from dotenv import load_dotenv
 
@@ -20,6 +20,17 @@ ALLOWED_CHANNELS = [
     1414011743662772295
 ]
 
+# 定期的にメッセージを送信するチャンネルID
+GREETING_CHANNEL_ID = 1414011712721649726
+
+# 10秒ごとに実行されるタスク
+@tasks.loop(seconds=10)
+async def send_greeting():
+    channel = bot.get_channel(GREETING_CHANNEL_ID)
+    if channel and isinstance(channel, discord.TextChannel):
+        await channel.send("おはようございます！")
+        print(f"チャンネル {GREETING_CHANNEL_ID} にメッセージを送信しました")
+
 @bot.event
 async def on_ready():
     print(f'{bot.user} としてログインしました！')
@@ -29,6 +40,11 @@ async def on_ready():
         print(f"{len(synced)}個のコマンドを同期しました")
     except Exception as e:
         print(f"コマンドの同期に失敗しました: {e}")
+    
+    # 定期タスクを開始
+    if not send_greeting.is_running():
+        send_greeting.start()
+        print("定期メッセージタスクを開始しました")
 
 # /helpスラッシュコマンド
 @bot.tree.command(name="help", description="このボットの使い方を表示します")
@@ -41,7 +57,7 @@ async def help_command(interaction: discord.Interaction):
     
     embed.add_field(
         name="📝 基本機能",
-        value="1. 送信されたメッセージをそのまま返信します（エコーボット）\n2. 👍リアクションが付けられたときにお知らせします",
+        value="1. 送信されたメッセージをそのまま返信します（エコーボット）\n2. 👍リアクションが付けられたときにお知らせします\n3. 10秒ごとに「おはようございます！」を投稿します",
         inline=False
     )
     
