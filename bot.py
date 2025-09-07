@@ -2,6 +2,8 @@ import discord
 from discord.ext import commands, tasks
 import os
 from dotenv import load_dotenv
+from datetime import datetime, time
+import pytz
 
 # .envファイルから環境変数を読み込み
 load_dotenv()
@@ -23,13 +25,14 @@ ALLOWED_CHANNELS = [
 # 定期的にメッセージを送信するチャンネルID
 GREETING_CHANNEL_ID = 1414011712721649726
 
-# 10秒ごとに実行されるタスク
-@tasks.loop(seconds=10)
+# 毎朝6時に実行されるタスク
+@tasks.loop(time=time(hour=6, minute=0, tzinfo=pytz.timezone('Asia/Tokyo')))
 async def send_greeting():
     channel = bot.get_channel(GREETING_CHANNEL_ID)
     if channel and isinstance(channel, discord.TextChannel):
         await channel.send("おはようございます！")
         print(f"チャンネル {GREETING_CHANNEL_ID} にメッセージを送信しました")
+        print(f"現在時刻: {datetime.now(pytz.timezone('Asia/Tokyo')).strftime('%Y-%m-%d %H:%M:%S')}")
 
 @bot.event
 async def on_ready():
@@ -57,7 +60,7 @@ async def help_command(interaction: discord.Interaction):
     
     embed.add_field(
         name="📝 基本機能",
-        value="1. 送信されたメッセージをそのまま返信します（エコーボット）\n2. 👍リアクションが付けられたときにお知らせします\n3. 10秒ごとに「おはようございます！」を投稿します",
+        value="1. 送信されたメッセージをそのまま返信します（エコーボット）\n2. 👍リアクションが付けられたときにお知らせします\n3. 毎朝6時に「おはようございます！」を投稿します",
         inline=False
     )
     
